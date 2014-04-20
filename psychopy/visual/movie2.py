@@ -570,19 +570,19 @@ class MovieStim2(BaseVisualStim, ContainerMixin):
             self.win.logOnFlip("Set %s finished" %(self.name),
                 level=logging.EXP,obj=self)
 
-#    def setAutoDraw(self, val, log=True):
-#        """Add or remove a stimulus from the list of stimuli that will be
-#        automatically drawn on each flip
-#
-#        :parameters:
-#            - val: True/False
-#                True to add the stimulus to the draw list, False to remove it
-#        """
-#        if val:
-#            self.play(log=False)  # set to play in case stopped
-#        else:
-#            self.pause(log=False)
-#        #add to drawing list and update status
-#        self.autoDraw = val
+    def setAutoDraw(self, val, log=True):
+        """Add or remove a stimulus from the list of stimuli that will be
+        automatically drawn on each flip
+
+        :parameters:
+            - val: True/False
+                True to add the stimulus to the draw list, False to remove it
+        """
+        if val:
+            self.play(log=False)  # set to play in case stopped
+        else:
+            self.pause(log=False)
+        #add to drawing list and update status
+        self.autoDraw = val
 #    def __del__(self):
 #        self._player.next()
