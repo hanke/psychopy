@@ -18,7 +18,8 @@ class MovieComponent(VisualComponent):
                 startType='time (s)', startVal=0.0,
                 stopType='duration (s)', stopVal=1.0,
                 startEstim='', durationEstim='',
-                forceEndRoutine=False):
+                forceEndRoutine=False,
+                backend='avbin'):
         #initialise main parameters from base stimulus
         VisualComponent.__init__(self,exp,parentName,name=name, units=units,
                     pos=pos, size=size, ori=ori,
@@ -41,6 +42,10 @@ class MovieComponent(VisualComponent):
             updates='constant', allowedUpdates=[],
             hint="Should the end of the movie cause the end of the routine (e.g. trial)?",
             label="Force end of Routine")
+        self.params['backend']=Param(backend, valType='str', allowedTypes=[], allowedVals=['avbin', 'cv2+vlc'],
+            updates='constant', allowedUpdates=[],
+            hint="Which video backend to use (AVbin lib or OpenCV2 with VLC)?",
+            label="Video backend")
         #these are normally added but we don't want them for a movie
         del self.params['color']
         del self.params['colorSpace']
@@ -57,7 +62,13 @@ class MovieComponent(VisualComponent):
             params = components.getInitVals(self.params)
         else:
             params = self.params
-        buff.writeIndented("%s = visual.MovieStim(win=win, name='%s',%s\n" %(params['name'],params['name'],unitsStr))
+        if params['backend'].val == 'avbin':
+            klass = 'visual.MovieStim'
+        elif params['backend'].val == 'cv2+vlc':
+            klass = 'visual.MovieStim2'
+        else:
+            raise ValueError("unsupported video backend '%s'" % (self.params['backend'].val,))
+        buff.writeIndented("%s = %s(win=win, name='%s',%s\n" %(params['name'], klass, params['name'],unitsStr))
         buff.writeIndented("    filename=%(movie)s,\n" %(params))
         buff.writeIndented("    ori=%(ori)s, pos=%(pos)s, opacity=%(opacity)s,\n" %(params))
         if self.params['size'].val != '':
